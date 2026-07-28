@@ -10,6 +10,8 @@ import {
   logAppError,
   logKeyboardAPIError,
 } from 'src/store/errorsSlice';
+import {KeyboardValue} from './keyboard-values';
+export {KeyboardValue} from './keyboard-values';
 
 // VIA Command IDs
 
@@ -52,14 +54,6 @@ const APICommandValueToName = Object.entries(APICommand).reduce(
   (acc: any, [key, value]) => ({...acc, [value]: key}),
   {} as Record<APICommand, string>,
 );
-
-export enum KeyboardValue {
-  UPTIME = 0x01,
-  LAYOUT_OPTIONS = 0x02,
-  SWITCH_MATRIX_STATE = 0x03,
-  FIRMWARE_VERSION = 0x04,
-  DEVICE_INDICATION = 0x05,
-}
 
 export enum UISyncRequestType {
   CUSTOM_MENU_ALL = 0x00,
