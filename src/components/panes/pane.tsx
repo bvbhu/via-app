@@ -13,8 +13,6 @@ export const Pane = styled.div`
 export const CenterPane = styled(Pane)`
   overflow: auto;
   display: block;
-  box-sizing: border-box;
-  padding-bottom: 16px;
 `;
 
 export const ConfigureBasePane = styled(Pane)`

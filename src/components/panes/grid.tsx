@@ -18,9 +18,6 @@ export const Cell = styled.div`
 export const MenuCell = styled(Cell)`
   background: var(--bg_menu);
   border-top: 1px solid var(--border_color_cell);
-  min-height: 0;
-  overflow-x: hidden;
-  overflow-y: auto;
 `;
 
 export const OverflowCell = styled(Cell)`
