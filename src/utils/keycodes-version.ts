@@ -33,6 +33,10 @@ export class UnsupportedKeycodesVersionError extends KeycodesVersionProtocolErro
 
 export const SUPPORTED_KEYCODES_VERSION = 0x00000008;
 
+// keymagichorse / BHQ fork：0.0.8 键码文件为空占位，固件可能实际上报 0.0.7。
+// 同时接受 0.0.7 与 0.0.8，避免 UnsupportedKeycodesVersionError 导致连不上键盘。
+export const SUPPORTED_KEYCODES_VERSIONS = [0x00000007, 0x00000008];
+
 export const formatKeycodesVersion = (version: number) =>
   `0x${version.toString(16).padStart(8, '0')}`;
 
@@ -68,7 +72,7 @@ export const decodeKeycodesVersion = (result: number[]) => {
       result,
     );
   }
-  if (version !== SUPPORTED_KEYCODES_VERSION) {
+  if (!SUPPORTED_KEYCODES_VERSIONS.includes(version)) {
     throw new UnsupportedKeycodesVersionError(version, result);
   }
   return version;

@@ -7,7 +7,7 @@ import {
   formatKeycodesVersion,
   KeycodesVersionProtocolError,
   readKeycodesVersion,
-  SUPPORTED_KEYCODES_VERSION,
+  SUPPORTED_KEYCODES_VERSIONS,
   UnsupportedKeycodesVersionError,
 } from 'src/utils/keycodes-version';
 import type {ConnectedDevice} from '../types/types';
@@ -85,7 +85,7 @@ export const loadKeycodesVersion =
       if (error instanceof KeycodesVersionProtocolError) {
         const details =
           error instanceof UnsupportedKeycodesVersionError
-            ? `Device reports unsupported QMK keycode version ${formatKeycodesVersion(error.version)}. This version of VIA supports ${formatKeycodesVersion(SUPPORTED_KEYCODES_VERSION)}. Update VIA before assigning keycodes.`
+            ? `Device reports unsupported QMK keycode version ${formatKeycodesVersion(error.version)}. This version of VIA supports ${SUPPORTED_KEYCODES_VERSIONS.map(formatKeycodesVersion).join(' or ')}. Update VIA before assigning keycodes.`
             : `Device reports VIA protocol ${connectedDevice.protocol}, but ${error.message.toLowerCase()}. Firmware may contain incompatible VIA and QMK revisions.`;
         dispatch(
           logKeyboardAPIError({

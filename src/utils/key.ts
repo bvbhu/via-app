@@ -89,6 +89,14 @@ const qmkRGBMatrixKeycodes: IKeycode[] = [
   {name: 'RM Speed -', code: 'RM_SPDD'},
 ];
 
+const qmkConnectionKeycodes: IKeycode[] = [
+  {name: 'BT 1', code: 'BT_PRF1', title: 'Bluetooth Profile 1', shortName: 'BT1'},
+  {name: 'BT 2', code: 'BT_PRF2', title: 'Bluetooth Profile 2', shortName: 'BT2'},
+  {name: 'BT 3', code: 'BT_PRF3', title: 'Bluetooth Profile 3', shortName: 'BT3'},
+  {name: 'USB', code: 'OU_USB', title: 'Output USB', shortName: 'USB'},
+  {name: 'BAT', code: 'BAT_INFO', title: 'Battery Info', shortName: 'BAT'},
+];
+
 // Tests if label is an alpha (including Unicode letters)
 export function isAlpha(label: string) {
   return label.length === 1 && /\p{L}/u.test(label);
@@ -314,6 +322,18 @@ export function getCodeForByte(
   ) {
     return advancedKeycodeToString(byte, basicKeyToByte, byteToKey);
   } else {
+    // connection keycodes (keymagichorse / BHQ fork)
+    const connectionByteToKey: Record<number, string> = {
+      0x7784: 'OU_USB',
+      0x7793: 'BT_PRF1',
+      0x7794: 'BT_PRF2',
+      0x7795: 'BT_PRF3',
+    };
+    if (byte >= 0x7780 && byte <= 0x779f) {
+      const k = connectionByteToKey[byte];
+      if (k) return k;
+    }
+    if (byte === 0x7e5e) return 'BAT_INFO';
     return '0x' + Number(byte).toString(16);
   }
 }
@@ -1105,6 +1125,7 @@ export function getKeycodes(numMacros = 16): IKeycodeMenu[] {
         {name: 'CUSTOM(15)', code: 'CUSTOM(15)', title: 'Custom Keycode 15'},
       ],
     },
+    {id: 'connection', label: 'Connection', width: 'label', keycodes: qmkConnectionKeycodes},
   ];
 }
 
