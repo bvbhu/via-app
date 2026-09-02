@@ -97,6 +97,15 @@ const qmkConnectionKeycodes: IKeycode[] = [
   {name: 'BAT', code: 'BAT_INFO', title: 'Battery Info', shortName: 'BAT'},
 ];
 
+// code -> byte for BHQ connection keycodes so they can be assigned in the picker
+const qmkConnectionKeyToByte: Record<string, number> = {
+  BT_PRF1: 0x7793,
+  BT_PRF2: 0x7794,
+  BT_PRF3: 0x7795,
+  OU_USB: 0x7784,
+  BAT_INFO: 0x7e5e,
+};
+
 // Tests if label is an alpha (including Unicode letters)
 export function isAlpha(label: string) {
   return label.length === 1 && /\p{L}/u.test(label);
@@ -141,9 +150,15 @@ export function getByteForCode(
   const byte: number | undefined = basicKeyToByte[code];
   if (byte !== undefined) {
     return byte;
-  } else if (isLayerCode(code)) {
+  }
+  const connectionByte: number | undefined = qmkConnectionKeyToByte[code];
+  if (connectionByte !== undefined) {
+    return connectionByte;
+  }
+  if (isLayerCode(code)) {
     return getByteForLayerCode(code, basicKeyToByte);
-  } else if (advancedStringToKeycode(code, basicKeyToByte) !== null) {
+  }
+  if (advancedStringToKeycode(code, basicKeyToByte) !== null) {
     return advancedStringToKeycode(code, basicKeyToByte);
   }
   throw `Could not find byte for ${code}`;
@@ -344,6 +359,7 @@ export function keycodeInMaster(
 ) {
   return (
     keycode in basicKeyToByte ||
+    keycode in qmkConnectionKeyToByte ||
     isLayerCode(keycode) ||
     advancedStringToKeycode(keycode, basicKeyToByte) !== null
   );
