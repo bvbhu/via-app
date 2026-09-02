@@ -11,14 +11,10 @@ jobs:
     name: Build
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          submodules: true
-
-      - name: Use Bun
-        uses: oven-sh/setup-bun@v1
-      - name: bun install, and start
-        run: |
-          bun install
-          bun run refresh-kbs
-          bun run build
+          node-version: 20
+          cache: npm
+      - run: npm install
+      - run: npm run build
