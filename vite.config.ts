@@ -8,7 +8,12 @@ import fs from 'fs';
 const hash = fs.readFileSync('public/definitions/hash.json', 'utf8');
 
 // https://vitejs.dev/config/
-export default defineConfig({
+export default defineConfig(({command}) => ({
+  // GitHub Pages serves this fork at https://bvbhu.github.io/via-app/, so
+  // production assets must be prefixed with /via-app/. This stays in sync with
+  // the wouter <Router base> in src/containers/Root.tsx (which is derived from
+  // import.meta.env.BASE_URL). Update both if the repository is ever renamed.
+  base: command === 'build' ? '/via-app/' : '/',
   plugins: [
     react(),
     createHtmlPlugin({
@@ -40,4 +45,4 @@ export default defineConfig({
       plugins: [],
     },
   },
-});
+}));
