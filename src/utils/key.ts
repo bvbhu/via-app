@@ -94,7 +94,6 @@ const qmkConnectionKeycodes: IKeycode[] = [
   {name: 'BT 2', code: 'BT_PRF2', title: 'Bluetooth Profile 2', shortName: 'BT2'},
   {name: 'BT 3', code: 'BT_PRF3', title: 'Bluetooth Profile 3', shortName: 'BT3'},
   {name: 'USB', code: 'OU_USB', title: 'Output USB', shortName: 'USB'},
-  {name: 'BAT', code: 'BAT_INFO', title: 'Battery Info', shortName: 'BAT'},
 ];
 
 // code -> byte for BHQ connection keycodes so they can be assigned in the picker
@@ -103,7 +102,6 @@ const qmkConnectionKeyToByte: Record<string, number> = {
   BT_PRF2: 0x7794,
   BT_PRF3: 0x7795,
   OU_USB: 0x7784,
-  BAT_INFO: 0x7e5e,
 };
 
 // Tests if label is an alpha (including Unicode letters)
@@ -348,7 +346,6 @@ export function getCodeForByte(
       const k = connectionByteToKey[byte];
       if (k) return k;
     }
-    if (byte === 0x7e5e) return 'BAT_INFO';
     return '0x' + Number(byte).toString(16);
   }
 }
