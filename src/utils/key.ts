@@ -90,19 +90,39 @@ const qmkRGBMatrixKeycodes: IKeycode[] = [
 ];
 
 const qmkConnectionKeycodes: IKeycode[] = [
+  {name: 'USB', code: 'OU_USB', title: 'Output USB', shortName: 'USB'},
+  {name: '2.4G', code: 'OU_2P4G', title: 'Output 2.4GHz', shortName: '2.4G'},
+  {name: 'BT Tog', code: 'OU_BT', title: 'Output Bluetooth (advertise)', shortName: 'BTTog'},
   {name: 'BT 1', code: 'BT_PRF1', title: 'Bluetooth Profile 1', shortName: 'BT1'},
   {name: 'BT 2', code: 'BT_PRF2', title: 'Bluetooth Profile 2', shortName: 'BT2'},
   {name: 'BT 3', code: 'BT_PRF3', title: 'Bluetooth Profile 3', shortName: 'BT3'},
-  {name: 'USB', code: 'OU_USB', title: 'Output USB', shortName: 'USB'},
+  {name: 'BT Reset', code: 'BLE_RESET', title: 'Bluetooth Reset', shortName: 'BTRst'},
+  {name: 'BT Off', code: 'BLE_OFF', title: 'Bluetooth Off', shortName: 'BTOff'},
+  {name: 'Bat Info', code: 'BAT_INFO', title: 'Battery Info', shortName: 'Bat'},
 ];
 
-// code -> byte for BHQ connection keycodes so they can be assigned in the picker
+// code -> byte for BHQ keycodes (connection + user keycodes) so they can be assigned in the picker
 const qmkConnectionKeyToByte: Record<string, number> = {
+  OU_USB: 0x7784,
+  OU_2P4G: 0x7785,
+  OU_BT: 0x7786,
   BT_PRF1: 0x7793,
   BT_PRF2: 0x7794,
   BT_PRF3: 0x7795,
-  OU_USB: 0x7784,
+  BLE_RESET: 0x7E5C,
+  BLE_OFF: 0x7E5D,
+  BAT_INFO: 0x7E5E,
 };
+
+// byte -> code for the same BHQ keycodes so they render as names, not hex.
+// Looked up before the generic layer/advanced handling because the user keycodes
+// (0x7E5C..0x7E5E) would otherwise be shadowed by via-app's _QK_KB range.
+const qmkConnectionByteToKey: Record<number, string> = Object.entries(
+  qmkConnectionKeyToByte,
+).reduce<Record<number, string>>(
+  (acc, [code, byte]) => ({...acc, [byte]: code}),
+  {},
+);
 
 // Tests if label is an alpha (including Unicode letters)
 export function isAlpha(label: string) {
@@ -328,6 +348,8 @@ export function getCodeForByte(
   const keycode = byteToKey[byte];
   if (keycode && !keycode.startsWith('_QK')) {
     return keycode;
+  } else if (byte in qmkConnectionByteToKey) {
+    return qmkConnectionByteToKey[byte];
   } else if (isLayerKey(byte, basicKeyToByte)) {
     return getCodeForLayerByte(byte, basicKeyToByte);
   } else if (
@@ -335,17 +357,6 @@ export function getCodeForByte(
   ) {
     return advancedKeycodeToString(byte, basicKeyToByte, byteToKey);
   } else {
-    // connection keycodes (keymagichorse / BHQ fork)
-    const connectionByteToKey: Record<number, string> = {
-      0x7784: 'OU_USB',
-      0x7793: 'BT_PRF1',
-      0x7794: 'BT_PRF2',
-      0x7795: 'BT_PRF3',
-    };
-    if (byte >= 0x7780 && byte <= 0x779f) {
-      const k = connectionByteToKey[byte];
-      if (k) return k;
-    }
     return '0x' + Number(byte).toString(16);
   }
 }
